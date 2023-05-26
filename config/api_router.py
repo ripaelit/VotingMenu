@@ -11,6 +11,9 @@ else:
     router = SimpleRouter()
 
 router.register("users", UserViewSet)
+router.register("votes", VoteViewSet)
+router.register("restaurants", RestaurantViewSet)
+router.register("menus", MenuViewSet)
 
 app_name = "api"
 urlpatterns = router.urls
