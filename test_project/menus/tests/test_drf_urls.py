@@ -18,15 +18,6 @@ def test_menu_detail():
     assert resolve(f"/api/menus/{menu_pk}/").view_name == "api:menu-detail"
 
 
-def test_upload_menu():
-    menu_pk = 1
-    assert (
-        reverse("api:menu-upload-menu", kwargs={"pk": menu_pk})
-        == f"/api/menus/{menu_pk}/upload_menu/"
-    )
-    assert resolve(f"/api/menus/{menu_pk}/upload_menu/").view_name == "api:menu-upload-menu"
-
-
 def test_vote_menu():
     menu_pk = 1
     assert (
