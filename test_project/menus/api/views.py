@@ -12,23 +12,20 @@ from .serializers import MenuSerializer, RestaurantSerializer
 from test_project.votes.models import Vote
 
 
-class CustomMenuFilterBackend(BaseFilterBackend):
-    """
-    Filter Backend for MenuViewSet
-    """
+# class CustomMenuFilterBackend(BaseFilterBackend):
+#     """
+#     Filter Backend for MenuViewSet
+#     """
+#     def filter_queryset(self, request, queryset, view):
+#         query_dict = request.query_params.dict()
+#         queryset = queryset.annotate(
+#             vote_sum=Value(Vote.VoteValue.NORMAL),
+#         )
 
-    def filter_queryset(self, request, queryset, view):
-        query_dict = request.query_params.dict()
-        # queryset = queryset.annotate(
-        #     _vote=Sum("vote__value"),
-        # )
-
-        # if query_dict.get("ordering"):
-        #     ordering = query_dict.get("ordering")
-            # ordering = ordering.replace("project__", "_")
-            # queryset = queryset.order_by("-list")
-
-        return queryset
+#         if query_dict.get("ordering"):
+#             ordering = query_dict.get("ordering")
+#             queryset = queryset.order_by(ordering)
+#         return queryset
 
 
 class MenuViewSet(ModelViewSet):
@@ -37,15 +34,16 @@ class MenuViewSet(ModelViewSet):
     queryset = Menu.objects.all()
     filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [
         SearchFilter,
-        CustomMenuFilterBackend,
+        # CustomMenuFilterBackend,
     ]
     filter_fields = {
-        "list": ["exact", "in"],
+        "content": ["exact", "in"],
         "restaurant__name": ["exact", "in"],
         "restaurant__location": ["exact", "in"],
     }
     ordering_fields = [
-        "list",
+        "content",
+        "vote_sum",
         "restaurant__name",
         "restaurant__location",
         "restaurant__created_at",
@@ -54,7 +52,7 @@ class MenuViewSet(ModelViewSet):
         "updated_at",
     ]
     search_fields = [
-        "list",
+        "content",
         "restaurant__name",
         "restaurant__location",
     ]

@@ -10,13 +10,12 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 
 class MenuSerializer(serializers.ModelSerializer):
-    vote_set = VoteSerializer(many=True, read_only=True)
     restaurant = serializers.SerializerMethodField()
-    _vote = serializers.CharField(read_only=True)
+    vote_sum = serializers.SerializerMethodField()
 
     class Meta:
         model = Menu
-        fields = ["id", "content", "restaurant", "_vote", "vote_set"]
+        fields = ["id", "content", "restaurant", "vote_sum"]
 
     def get_restaurant(self, obj, *args, **kwargs):
         from test_project.menus.api.serializers import RestaurantSerializer
@@ -25,3 +24,10 @@ class MenuSerializer(serializers.ModelSerializer):
             key: RestaurantSerializer(obj.restaurant, context=self.context).data[key]
             for key in ("name", "location")
         }
+
+    def get_vote_sum(self, obj, *args, **kwargs):
+        vote_set = obj.vote_set.all()
+        value = 0
+        for vote in vote_set:
+            value += int(vote.value)
+        return value
