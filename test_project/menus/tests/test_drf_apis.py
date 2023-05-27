@@ -16,4 +16,6 @@ class TestMenuAPI:
             data={"top": "first"}
         )
         assert response.status_code == status.HTTP_200_OK
-        assert isinstance(response.data["content"], str)
+        assert response.data["restaurant"]["name"] == ready_menus.menus[0].restaurant.name
+        assert response.data["restaurant"]["location"] == ready_menus.menus[0].restaurant.location
+        assert response.data["content"] == ready_menus.menus[0].content
