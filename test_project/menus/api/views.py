@@ -29,6 +29,20 @@ from test_project.votes.models import Vote
 
 
 class MenuViewSet(ModelViewSet):
+    """
+    API:
+        upload_menu: 
+            description: upload menu for restaurant
+            user permission role: admin or restaurant
+
+        vote_menu: 
+            description: vote for restaurant menu
+            user permission role: everyone
+
+        list: 
+            description: get current day menu & get results for current day
+            user permission role: everyone
+    """
     permission_classes = (DRYPermissions,)
     serializer_class = MenuSerializer
     queryset = Menu.objects.all()
@@ -59,6 +73,17 @@ class MenuViewSet(ModelViewSet):
 
     @action(detail=True, methods=["PATCH"])
     def upload_menu(self, request, pk):
+        """
+        Upload restaurant menu
+
+        params:
+            request:
+                body:
+                    content: string of menu items(ex: brandie, spaghetti, pizza)
+            pk: menu id to be uploaded
+
+        return: uploaded menu information
+        """
         restaurant_menu = Menu.objects.get(pk=pk)
         restaurant_menu.upload_menu(request.data.get("content"))
         return Response(
@@ -71,6 +96,19 @@ class MenuViewSet(ModelViewSet):
 
     @action(detail=True, methods=["POST"])
     def vote_menu(self, request, pk):
+        """
+        Vote for menu
+
+        params:
+            request:
+                header:
+                    api-version: version of api(ex: 'v1' for old version and 'v2' for new version)
+                body: (only required for v2)
+                    top: voting order of menu(ex: 'first' for the best menu)
+            pk: menu id to be voted
+
+        return: voted menu information
+        """
         restaurant_menu = Menu.objects.get(pk=pk)
         version = request.META.get('api-version')
         if version == "v1" or version == None:
@@ -94,6 +132,12 @@ class MenuViewSet(ModelViewSet):
 
 
 class RestaurantViewSet(ModelViewSet):
+    """
+    API:
+        create:
+            description: create restaurant
+            permission: admin
+    """
     permission_classes = (DRYPermissions,)
     serializer_class = RestaurantSerializer
     queryset = Restaurant.objects.all()

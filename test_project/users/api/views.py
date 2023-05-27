@@ -12,6 +12,20 @@ User = get_user_model()
 
 
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
+    """
+    API:
+        login: 
+            description: authenticate user login
+            user permission role: everyone
+
+        me:
+            description: get current user
+            user permission role: everyone
+
+        create:
+            description: create user with permission role(admin, restaurant, employee)
+            user permission role: admin
+    """
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "username"
@@ -27,6 +41,20 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
 
     @action(detail=False, methods=["POST"])
     def login(self, request):
+        """
+        Authenticate user login
+
+        params:
+            request:
+                body:
+                    username: name of user(ex: Teofil)
+                    email: email of user(ex: ripaelit1111@gmail.com)
+                    password: xxxxxxxxxx
+        return:
+            If username or email is not set, raise ValidationError.
+            If username or password is incorrect, return Unauthorized error
+            Return user information for valid user
+        """
         password = request.data["password"]
         if request.data.get("username"):
             username = request.data["username"]
