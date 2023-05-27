@@ -11,11 +11,29 @@ pytestmark = pytest.mark.django_db
 class TestMenuAPI:
     def test_vote_menu(self, client: Client, ready_user, ready_menus: FixtureDataPool):
         client.force_login(ready_user)
+
+        client.defaults["Api-version"] = "v1"
         response = client.post(
-            reverse("api:menu-vote-menu", kwargs={"pk": ready_menus.menus[0].pk}),
-            data={"top": "first"}
+            reverse("api:menu-vote-menu"),
+            data={"menus": ready_menus.menus[0].pk}
         )
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["restaurant"]["name"] == ready_menus.menus[0].restaurant.name
-        assert response.data["restaurant"]["location"] == ready_menus.menus[0].restaurant.location
-        assert response.data["content"] == ready_menus.menus[0].content
+        menus_id = ','.join([str(menu.pk) for menu in ready_menus.menus])
+        response = client.post(
+            reverse("api:menu-vote-menu"),
+            data={"menus": menus_id}
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+        client.defaults["Api-version"] = "v2"
+        response = client.post(
+            reverse("api:menu-vote-menu"),
+            data={"menus": menus_id}
+        )
+        assert response.status_code == status.HTTP_200_OK
+        menus_id = ','.join([str(menu.pk) for menu in ready_menus.menus[1:]])
+        response = client.post(
+            reverse("api:menu-vote-menu"),
+            data={"menus": menus_id}
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

@@ -66,5 +66,7 @@ def ready_menu(ready_restaurant) -> Menu:
 def ready_menus(ready_menu) -> FixtureDataPool:
     result = []
     result.append(ready_menu)
+    result.append(ready_menu)
+    result.append(ready_menu)
     test_data_pool = FixtureDataPool(result)
     return test_data_pool

@@ -12,6 +12,11 @@ from .serializers import MenuSerializer, RestaurantSerializer
 from test_project.votes.models import Vote
 
 
+# We vote top three menus in new version api(v2)
+VOTED_MENUS_COUNT_V2 = 3
+# We vote only one menu in old version api(v1)
+VOTED_MENUS_COUNT_V1 = 1
+
 class CustomMenuFilterBackend(BaseFilterBackend):
     """
     Filter Backend for MenuViewSet
@@ -68,41 +73,50 @@ class MenuViewSet(ModelViewSet):
         "restaurant__location",
     ]
 
-    @action(detail=True, methods=["POST"])
-    def vote_menu(self, request, pk):
+    @action(detail=False, methods=["POST"])
+    def vote_menu(self, request):
         """
         Vote for menu
 
         params:
             request:
                 header:
-                    api-version: version of api(ex: 'v1' for old version and 'v2' for new version)
-                body: (only required for v2)
-                    top: voting order of menu(ex: 'first' for the best menu)
-            pk: menu id to be voted
+                    api-version: version of api(ex: "v1" for old version and "v2" for new version)
+                body:
+                    menus: id of menus to be voted (ex: "10" in v1, "17,23,34" in v2)
 
-        return: voted menu information
+        return: HTTP_200_OK response
         """
-        restaurant_menu = Menu.objects.get(pk=pk)
+        voted_menus_id = request.data.get("menus")
+        voted_menus_id = voted_menus_id.split(',')
+
         version = request.META.get('Api-version')
         if version == "v1":
-            Menu.vote_menu(request.user, restaurant_menu, Vote.VoteValue.BEST)
-        if version == "v2":
-            if request.data.get('top') == 'first':
-                value = Vote.VoteValue.BEST
-            if request.data.get('top') == 'second':
-                value = Vote.VoteValue.BETTER
-            if request.data.get('top') == 'third':
-                value = Vote.VoteValue.GOOD
-            Menu.vote_menu(request.user, restaurant_menu, value)
+            if len(voted_menus_id) == VOTED_MENUS_COUNT_V1:
+                restaurant_menu = Menu.objects.get(pk=int(voted_menus_id[0]))
+                Menu.vote_menu(request.user, restaurant_menu, Vote.VoteValue.BEST)
+            else:
+                return Response(
+                    status=status.HTTP_400_BAD_REQUEST,
+                    data="We vote only one menu in old version api."
+                )
+        if version == "v2" or version == None:
+            if len(voted_menus_id) == VOTED_MENUS_COUNT_V2:
+                value = [
+                    Vote.VoteValue.BEST,
+                    Vote.VoteValue.BETTER,
+                    Vote.VoteValue.GOOD,
+                ]
+                for i in range(VOTED_MENUS_COUNT_V2):
+                    restaurant_menu = Menu.objects.get(pk=int(voted_menus_id[i]))
+                    Menu.vote_menu(request.user, restaurant_menu, value[i])
+            else:
+                return Response(
+                    status=status.HTTP_400_BAD_REQUEST,
+                    data="We vote three menus in new version api."
+                )
 
-        return Response(
-            data=MenuSerializer(
-                restaurant_menu,
-                context={"request": request},
-            ).data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(status=status.HTTP_200_OK)
 
 
 class RestaurantViewSet(ModelViewSet):

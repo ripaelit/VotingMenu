@@ -19,12 +19,11 @@ def test_menu_detail():
 
 
 def test_vote_menu():
-    menu_pk = 1
     assert (
-        reverse("api:menu-vote-menu", kwargs={"pk": menu_pk})
-        == f"/api/menus/{menu_pk}/vote_menu/"
+        reverse("api:menu-vote-menu")
+        == f"/api/menus/vote_menu/"
     )
-    assert resolve(f"/api/menus/{menu_pk}/vote_menu/").view_name == "api:menu-vote-menu"
+    assert resolve(f"/api/menus/vote_menu/").view_name == "api:menu-vote-menu"
 
 
 def test_restaurant_list():
