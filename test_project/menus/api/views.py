@@ -31,14 +31,12 @@ from test_project.votes.models import Vote
 class MenuViewSet(ModelViewSet):
     """
     API:
-        upload_menu: 
-            description: upload menu for restaurant
-            user permission role: admin or restaurant
-
         vote_menu: 
             description: vote for restaurant menu
             user permission role: everyone
-
+        update: 
+            description: upload menu for restaurant
+            user permission role: admin or restaurant
         list: 
             description: get current day menu & get results for current day
             user permission role: everyone
@@ -70,29 +68,6 @@ class MenuViewSet(ModelViewSet):
         "restaurant__name",
         "restaurant__location",
     ]
-
-    @action(detail=True, methods=["PATCH"])
-    def upload_menu(self, request, pk):
-        """
-        Upload restaurant menu
-
-        params:
-            request:
-                body:
-                    content: string of menu items(ex: brandie, spaghetti, pizza)
-            pk: menu id to be uploaded
-
-        return: uploaded menu information
-        """
-        restaurant_menu = Menu.objects.get(pk=pk)
-        restaurant_menu.upload_menu(request.data.get("content"))
-        return Response(
-            data=MenuSerializer(
-                restaurant_menu,
-                context={"request": request},
-            ).data,
-            status=status.HTTP_200_OK,
-        )
 
     @action(detail=True, methods=["POST"])
     def vote_menu(self, request, pk):

@@ -41,10 +41,6 @@ class Menu(TimeStampedModel):
     def __str__(self) -> str:
         return f"{self.restaurant.name} Menu"
 
-    def upload_menu(self, content):
-        self.content = content
-        self.save()
-
     @classmethod
     def vote_menu(cls, user, menu, value):
         vote = Vote()
@@ -56,23 +52,25 @@ class Menu(TimeStampedModel):
     # BEGIN of PERMISSION LOGIC =============
     @classmethod
     def has_create_permission(cls, request):
-        return True
+        return request.user.is_authenticated
+
+    @classmethod
+    def has_write_permission(cls, request):
+        return request.user.is_authenticated
 
     @classmethod
     def has_read_permission(cls, request):
-        return True
+        return request.user.is_authenticated
 
     @classmethod
     def has_object_read_permission(cls, request):
-        return True
+        return request.user.is_authenticated
 
-    @classmethod
-    def has_upload_menu_permission(cls, request):
-        return check_permission_role(request, cls.restaurant)
+    def has_object_write_permission(self, request):
+        return check_permission_role(request, self.restaurant)
 
-    @classmethod
-    def has_object_upload_menu_permission(cls, request):
-        return check_permission_role(request, cls.restaurant)
+    def has_object_update_permission(self, request):
+        return check_permission_role(request, self.restaurant)
 
     @classmethod
     def has_vote_menu_permission(cls, request):
