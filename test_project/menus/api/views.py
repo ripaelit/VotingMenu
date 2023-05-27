@@ -85,10 +85,10 @@ class MenuViewSet(ModelViewSet):
         return: voted menu information
         """
         restaurant_menu = Menu.objects.get(pk=pk)
-        version = request.META.get('api-version')
-        if version == "v1" or version == None:
+        version = request.META.get('Api-version')
+        if version == "v1":
             Menu.vote_menu(request.user, restaurant_menu, Vote.VoteValue.BEST)
-        elif version == "v2":
+        if version == "v2":
             if request.data.get('top') == 'first':
                 value = Vote.VoteValue.BEST
             if request.data.get('top') == 'second':
