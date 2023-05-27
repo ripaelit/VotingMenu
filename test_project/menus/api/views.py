@@ -20,11 +20,11 @@ class CustomMenuFilterBackend(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         query_dict = request.query_params.dict()
         # queryset = queryset.annotate(
-        #     _vote=F("vote__value"),
+        #     _vote=Sum("vote__value"),
         # )
 
-        if query_dict.get("ordering"):
-            ordering = query_dict.get("ordering")
+        # if query_dict.get("ordering"):
+        #     ordering = query_dict.get("ordering")
             # ordering = ordering.replace("project__", "_")
             # queryset = queryset.order_by("-list")
 
@@ -74,7 +74,18 @@ class MenuViewSet(ModelViewSet):
     @action(detail=True, methods=["POST"])
     def vote_menu(self, request, pk):
         restaurant_menu = Menu.objects.get(pk=pk)
-        Menu.vote_menu(request.user, restaurant_menu, request.data.get("value"))
+        version = request.META.get('api-version')
+        if version == "v1" or version == None:
+            Menu.vote_menu(request.user, restaurant_menu, Vote.VoteValue.BEST)
+        elif version == "v2":
+            if request.data.get('top') == 'first':
+                value = Vote.VoteValue.BEST
+            if request.data.get('top') == 'second':
+                value = Vote.VoteValue.BETTER
+            if request.data.get('top') == 'third':
+                value = Vote.VoteValue.GOOD
+            Menu.vote_menu(request.user, restaurant_menu, value)
+
         return Response(
             data=MenuSerializer(
                 restaurant_menu,
