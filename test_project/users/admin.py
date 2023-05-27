@@ -22,6 +22,7 @@ class UserAdmin(auth_admin.UserAdmin):
                     "is_staff",
                     "is_superuser",
                     "permission_role",
+                    "restaurant",
                     "groups",
                     "user_permissions",
                 ),

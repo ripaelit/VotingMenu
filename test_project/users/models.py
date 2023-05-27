@@ -17,6 +17,7 @@ class User(TimeStampedModel, AbstractUser):
     name = models.CharField(_("Name of User"), max_length=255)
     first_name = models.CharField(_("Firstname of User"), blank=True, max_length=255)
     last_name = models.CharField(_("Lastname of User"), blank=True, max_length=255)
+    restaurant = models.ForeignKey("menus.Restaurant", null=True, blank=True, on_delete=models.SET_NULL)
 
     class PermissionChoices(models.TextChoices):
         Admin = "admin"

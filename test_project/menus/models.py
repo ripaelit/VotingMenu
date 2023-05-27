@@ -68,11 +68,11 @@ class Menu(TimeStampedModel):
 
     @classmethod
     def has_upload_menu_permission(cls, request):
-        return check_permission_role(request)
+        return check_permission_role(request, cls.restaurant)
 
     @classmethod
     def has_object_upload_menu_permission(cls, request):
-        return check_permission_role(request)
+        return check_permission_role(request, cls.restaurant)
 
     @classmethod
     def has_vote_menu_permission(cls, request):
