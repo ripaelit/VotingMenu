@@ -9,8 +9,8 @@ pytestmark = pytest.mark.django_db
 
 
 class TestMenuAPI:
-    @pytest.mark.skip
-    def test_vote_menu(self, client: Client, ready_menus: FixtureDataPool):
+    def test_vote_menu(self, client: Client, ready_user, ready_menus: FixtureDataPool):
+        client.force_login(ready_user)
         response = client.post(
             reverse("api:menu-vote-menu", kwargs={"pk": ready_menus.menus[0].pk}),
             data={"top": "first"}

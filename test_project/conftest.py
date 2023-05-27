@@ -38,6 +38,7 @@ def menu() -> Menu:
 @pytest.fixture
 def ready_user() -> User:
     user = UserFactory(name="test")
+    user.save()
     return user
 
 
@@ -47,6 +48,7 @@ def ready_restaurant() -> Restaurant:
         name="Cake Restaurant",
         location="Salman Street 3.",
     )
+    restaurant.save()
     return restaurant
 
 
@@ -61,7 +63,7 @@ def ready_menu(ready_restaurant) -> Menu:
 
 
 @pytest.fixture
-def ready_menus(request, ready_menu) -> FixtureDataPool:
+def ready_menus(ready_menu) -> FixtureDataPool:
     result = []
     result.append(ready_menu)
     test_data_pool = FixtureDataPool(result)
