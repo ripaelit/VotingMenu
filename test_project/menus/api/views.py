@@ -12,20 +12,20 @@ from .serializers import MenuSerializer, RestaurantSerializer
 from test_project.votes.models import Vote
 
 
-# class CustomMenuFilterBackend(BaseFilterBackend):
-#     """
-#     Filter Backend for MenuViewSet
-#     """
-#     def filter_queryset(self, request, queryset, view):
-#         query_dict = request.query_params.dict()
-#         queryset = queryset.annotate(
-#             vote_sum=Value(Vote.VoteValue.NORMAL),
-#         )
+class CustomMenuFilterBackend(BaseFilterBackend):
+    """
+    Filter Backend for MenuViewSet
+    """
+    def filter_queryset(self, request, queryset, view):
+        query_dict = request.query_params.dict()
+        queryset = queryset.annotate(
+            vote_sum=Sum("vote__value"),
+        )
 
-#         if query_dict.get("ordering"):
-#             ordering = query_dict.get("ordering")
-#             queryset = queryset.order_by(ordering)
-#         return queryset
+        if query_dict.get("ordering"):
+            ordering = query_dict.get("ordering")
+            queryset = queryset.order_by(ordering)
+        return queryset
 
 
 class MenuViewSet(ModelViewSet):
@@ -46,7 +46,7 @@ class MenuViewSet(ModelViewSet):
     queryset = Menu.objects.all()
     filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [
         SearchFilter,
-        # CustomMenuFilterBackend,
+        CustomMenuFilterBackend,
     ]
     filter_fields = {
         "content": ["exact", "in"],
@@ -55,7 +55,6 @@ class MenuViewSet(ModelViewSet):
     }
     ordering_fields = [
         "content",
-        "vote_sum",
         "restaurant__name",
         "restaurant__location",
         "restaurant__created_at",

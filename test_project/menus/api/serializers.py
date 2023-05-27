@@ -11,7 +11,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 class MenuSerializer(serializers.ModelSerializer):
     restaurant = serializers.SerializerMethodField()
-    vote_sum = serializers.SerializerMethodField()
+    vote_sum = serializers.IntegerField()
 
     class Meta:
         model = Menu
@@ -24,10 +24,3 @@ class MenuSerializer(serializers.ModelSerializer):
             key: RestaurantSerializer(obj.restaurant, context=self.context).data[key]
             for key in ("name", "location")
         }
-
-    def get_vote_sum(self, obj, *args, **kwargs):
-        vote_set = obj.vote_set.all()
-        value = 0
-        for vote in vote_set:
-            value += int(vote.value)
-        return value
