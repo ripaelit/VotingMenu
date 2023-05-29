@@ -27,7 +27,13 @@ class Restaurant(TimeStampedModel):
         return True
 
     @classmethod
-    def has_delete_permission(cls, request):
+    def has_destroy_permission(cls, request):
+        if request.user.permission_role == User.PermissionChoices.Admin:
+            return True
+        else:
+            return False
+
+    def has_object_destroy_permission(cls, request):
         if request.user.permission_role == User.PermissionChoices.Admin:
             return True
         else:
@@ -51,19 +57,18 @@ class Menu(TimeStampedModel):
     # BEGIN of PERMISSION LOGIC =============
     @classmethod
     def has_create_permission(cls, request):
-        return request.user.is_authenticated
+        return check_permission_role(request, cls.restaurant)
 
     @classmethod
     def has_write_permission(cls, request):
-        return request.user.is_authenticated
+        return check_permission_role(request, cls.restaurant)
 
     @classmethod
     def has_read_permission(cls, request):
-        return request.user.is_authenticated
+        return True
 
-    @classmethod
     def has_object_read_permission(cls, request):
-        return request.user.is_authenticated
+        return True
 
     def has_object_write_permission(self, request):
         return check_permission_role(request, self.restaurant)
@@ -72,9 +77,14 @@ class Menu(TimeStampedModel):
         return check_permission_role(request, self.restaurant)
 
     @classmethod
-    def has_vote_menu_permission(cls, request):
-        return True
+    def has_destroy_permission(cls, request):
+        if request.user.permission_role == User.PermissionChoices.Admin:
+            return True
+        else:
+            return False
 
-    @classmethod
-    def has_object_vote_menu_permission(cls, request):
-        return True
+    def has_object_destroy_permission(cls, request):
+        if request.user.permission_role == User.PermissionChoices.Admin:
+            return True
+        else:
+            return False

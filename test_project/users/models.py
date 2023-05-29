@@ -40,6 +40,41 @@ class User(TimeStampedModel, AbstractUser):
         return reverse("users:detail", kwargs={"username": self.username})
 
     # BEGIN of PERMISSION LOGIC =============
+    @staticmethod
+    def has_login_permission(request):
+        return True
+
     @classmethod
     def has_write_permission(cls, request):
+        if request.user.permission_role == User.PermissionChoices.Admin:
+            return True
+        else:
+            return False
+
+    @classmethod
+    def has_create_permission(cls, request):
+        if request.user.permission_role == User.PermissionChoices.Admin:
+            return True
+        else:
+            return False
+
+    @classmethod
+    def has_read_permission(cls, request):
         return True
+    
+    @classmethod
+    def has_object_read_permission(cls, request):
+        return True
+
+    @classmethod
+    def has_destroy_permission(cls, request):
+        if request.user.permission_role == User.PermissionChoices.Admin:
+            return True
+        else:
+            return False
+
+    def has_object_destroy_permission(cls, request):
+        if request.user.permission_role == User.PermissionChoices.Admin:
+            return True
+        else:
+            return False

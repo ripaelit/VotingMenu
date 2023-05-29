@@ -18,14 +18,6 @@ def test_menu_detail():
     assert resolve(f"/api/menus/{menu_pk}/").view_name == "api:menu-detail"
 
 
-def test_vote_menu():
-    assert (
-        reverse("api:menu-vote-menu")
-        == f"/api/menus/vote_menu/"
-    )
-    assert resolve(f"/api/menus/vote_menu/").view_name == "api:menu-vote-menu"
-
-
 def test_restaurant_list():
     assert reverse("api:restaurant-list") == "/api/restaurants/"
     assert resolve("/api/restaurants/").view_name == "api:restaurant-list"

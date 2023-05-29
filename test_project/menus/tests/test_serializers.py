@@ -21,10 +21,12 @@ class TestRestaurantSerializer:
 
 
 class TestMenuSerializer:
-    def test_serializers(self, restaurant):
+    def test_serializers(self, ready_restaurant):
         menu_data = {
-            "restaurant": restaurant.pk,
+            "id": ready_restaurant.pk,
+            "restaurant": ready_restaurant,
             "content": "Al dente, Blanch, Braise, Caramelise, Dust, Fold, Julienne",
+            "vote_sum": 0,
         }
         serializer = MenuSerializer(data=menu_data)
         try:

@@ -22,6 +22,15 @@ def media_storage(settings, tmpdir):
 def user(db) -> User:
     return UserFactory()
 
+@pytest.fixture
+def user_data():
+    user = User.objects.create(
+        username='testuser',
+        email='testuser@example.com',
+        password='password',
+        permission_role=User.PermissionChoices.Admin
+    )
+    return user
 
 @pytest.fixture
 def restaurant() -> Restaurant:
@@ -37,7 +46,21 @@ def menu() -> Menu:
 
 @pytest.fixture
 def ready_user() -> User:
-    user = UserFactory(name="test")
+    user = UserFactory(name="test", username="test", password="test", permission_role=User.PermissionChoices.Admin)
+    user.save()
+    return user
+
+
+@pytest.fixture
+def ready_user1() -> User:
+    user = UserFactory(name="test1", username="test1", password="test1", permission_role=User.PermissionChoices.RestaurantManager)
+    user.save()
+    return user
+
+
+@pytest.fixture
+def ready_user2() -> User:
+    user = UserFactory(name="test2", username="test2", password="test2", permission_role=User.PermissionChoices.Employee)
     user.save()
     return user
 
