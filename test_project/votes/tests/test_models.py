@@ -5,10 +5,10 @@ pytestmark = pytest.mark.django_db
 
 
 class TestVoteModel:
-    def test_vote_menu(self, ready_user, ready_menu, ready_menus):
+    def test_vote_menu(self, user_with_admin_permission, ready_menu, ready_menus):
         try:
-            Vote.create(user=ready_user, menu=ready_menu, value=Vote.VoteValue.BEST)
-            Vote.create_votes_v2(user=ready_user, menus=ready_menus)
+            Vote.create(user=user_with_admin_permission, menu=ready_menu, value=Vote.VoteValue.BEST)
+            Vote.create_votes_v2(user=user_with_admin_permission, menus=ready_menus)
         except:
             import sys
 

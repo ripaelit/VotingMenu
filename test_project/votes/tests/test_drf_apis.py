@@ -9,8 +9,8 @@ pytestmark = pytest.mark.django_db
 
 
 class TestVoteAPI:
-    def test_vote_menu(self, client: Client, ready_user, ready_menus: FixtureDataPool):
-        client.force_login(ready_user)
+    def test_vote_menu(self, client: Client, user_with_admin_permission, ready_menus: FixtureDataPool):
+        client.force_login(user_with_admin_permission)
         client.defaults["Api-version"] = "v1"
         response = client.post(
             reverse("api:vote-vote-menu"),

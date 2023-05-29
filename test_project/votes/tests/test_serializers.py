@@ -8,9 +8,9 @@ pytestmark = pytest.mark.django_db
 
 
 class TestVoteSerializer:
-    def test_serializers(self, ready_user, ready_menu):
+    def test_serializers(self, user_with_admin_permission, ready_menu):
         restaurant_data = {
-            "user": ready_user.pk,
+            "user": user_with_admin_permission.pk,
             "menu": ready_menu.pk,
             "value": Vote.VoteValue.BEST
         }

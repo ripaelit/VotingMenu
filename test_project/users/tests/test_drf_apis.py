@@ -10,16 +10,16 @@ pytestmark = pytest.mark.django_db
 
 
 class TestUserAPI:
-    def test_login(self, client: Client, ready_user):
-        client.force_login(ready_user)
+    def test_login(self, client: Client, user_with_admin_permission):
+        client.force_login(user_with_admin_permission)
         response = client.post(
             reverse("api:user-login"),
-            data={"username": ready_user.username, "password": ready_user.username},
+            data={"username": user_with_admin_permission.username, "password": user_with_admin_permission.username},
         )
         assert response.status_code == status.HTTP_200_OK
 
-    def test_create(self, client: Client, ready_user, ready_user1, ready_user2):
-        client.force_login(ready_user2)
+    def test_create(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission):
+        client.force_login(user_with_employee_permission)
         response = client.post(
             reverse("api:user-list"),
             data={
@@ -27,7 +27,7 @@ class TestUserAPI:
             }
         )
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-        client.force_login(ready_user1)
+        client.force_login(user_with_restaurant_manager_permission)
         response = client.post(
             reverse("api:user-list"),
             data={
@@ -35,9 +35,9 @@ class TestUserAPI:
             }
         )
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-        client.force_login(ready_user)
+        client.force_login(user_with_admin_permission)
         response = client.post(
             reverse("api:user-login"),
-            data={"username": ready_user.username, "password": ready_user.username},
+            data={"username": user_with_admin_permission.username, "password": user_with_admin_permission.username},
         )
         assert response.status_code == status.HTTP_200_OK
