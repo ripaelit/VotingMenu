@@ -21,11 +21,11 @@ class User(TimeStampedModel, AbstractUser):
 
     class PermissionChoices(models.TextChoices):
         Admin = "admin"
-        Restaurant = "restaurant"
+        RestaurantManager = "restaurant manager"
         Employee = "employee"
 
     permission_role = models.CharField(
-        max_length=100,
+        max_length=18,
         choices=PermissionChoices.choices,
         default=PermissionChoices.Employee,
     )

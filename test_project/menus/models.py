@@ -26,6 +26,13 @@ class Restaurant(TimeStampedModel):
     def has_read_permission(cls, request):
         return True
 
+    @classmethod
+    def has_delete_permission(cls, request):
+        if request.user.permission_role == User.PermissionChoices.Admin:
+            return True
+        else:
+            return False
+
 
 class Menu(TimeStampedModel):
     restaurant = models.ForeignKey(
@@ -36,18 +43,10 @@ class Menu(TimeStampedModel):
         },
         on_delete=models.CASCADE,
     )
-    content = models.TextField(_("Content of Menu - Menu Items as Plain Text"))
+    content = models.TextField(_("Content of Menu - Menu Items as Plain Text")) # will convert into independent model in later versions
 
     def __str__(self) -> str:
         return f"{self.restaurant.name} Menu"
-
-    @classmethod
-    def vote_menu(cls, user, menu, value):
-        vote = Vote()
-        vote.user = user
-        vote.menu = menu
-        vote.value = value
-        vote.save()
 
     # BEGIN of PERMISSION LOGIC =============
     @classmethod

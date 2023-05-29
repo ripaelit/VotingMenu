@@ -21,6 +21,34 @@ class Vote(TimeStampedModel):
         default=VoteValue.NORMAL,
     )
 
+    @classmethod
+    def create(cls, user, menu, value):
+        try:
+            inst = cls.objects.get(user=user)
+            return inst
+        except cls.DoesNotExist:
+            new_inst = cls(user=user, menu=menu)
+            new_inst.value = value
+            new_inst.save()
+            return new_inst
+
+    @classmethod
+    def create_votes_v2(cls, user, menus):
+        try:
+            inst = cls.objects.get(user=user)
+            return inst
+        except cls.DoesNotExist:
+            value = [
+                Vote.VoteValue.BEST,
+                Vote.VoteValue.BETTER,
+                Vote.VoteValue.GOOD,
+            ]
+            for i in range(len(menus)):
+                new_inst = cls(user=user, menu=menus[i])
+                new_inst.value = value[i]
+                new_inst.save()
+            return new_inst
+
     # BEGIN of PERMISSION LOGIC =============
     @classmethod
     def has_create_permission(cls, request):
@@ -28,4 +56,12 @@ class Vote(TimeStampedModel):
 
     @classmethod
     def has_read_permission(cls, request):
+        return True
+
+    @classmethod
+    def has_vote_menu_permission(cls, request):
+        return True
+
+    @classmethod
+    def has_vote_menu_permission(cls, request):
         return True
