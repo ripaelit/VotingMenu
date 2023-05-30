@@ -17,25 +17,12 @@ class User(TimeStampedModel, AbstractUser):
     name = models.CharField(_("Name of User"), max_length=255)
     first_name = models.CharField(_("Firstname of User"), blank=True, max_length=255)
     last_name = models.CharField(_("Lastname of User"), blank=True, max_length=255)
-    restaurant = models.ForeignKey("menus.Restaurant", null=True, blank=True, on_delete=models.SET_NULL)
-
-    class PermissionChoices(models.TextChoices):
-        Admin = "admin"
-        RestaurantManager = "restaurant manager"
-        Employee = "employee"
-
-    permission_role = models.CharField(
-        max_length=18,
-        choices=PermissionChoices.choices,
-        default=PermissionChoices.Employee,
-    )
 
     def get_absolute_url(self) -> str:
         """Get URL for user's detail view.
 
         Returns:
             str: URL for user detail.
-
         """
         return reverse("users:detail", kwargs={"username": self.username})
 
@@ -45,36 +32,22 @@ class User(TimeStampedModel, AbstractUser):
         return True
 
     @classmethod
+    def has_read_permission(cls, request):
+        return True
+
+    @classmethod
     def has_write_permission(cls, request):
-        if request.user.permission_role == User.PermissionChoices.Admin:
-            return True
-        else:
-            return False
+        return request.user.is_staff
 
     @classmethod
     def has_create_permission(cls, request):
-        if request.user.permission_role == User.PermissionChoices.Admin:
-            return True
-        else:
-            return False
+        return request.user.is_staff
 
-    @classmethod
-    def has_read_permission(cls, request):
-        return True
-    
-    @classmethod
-    def has_object_read_permission(cls, request):
+    def has_object_read_permission(self, request):
         return True
 
-    @classmethod
-    def has_destroy_permission(cls, request):
-        if request.user.permission_role == User.PermissionChoices.Admin:
-            return True
-        else:
-            return False
+    def has_object_update_permission(self, request):
+        return request.user.is_staff
 
-    def has_object_destroy_permission(cls, request):
-        if request.user.permission_role == User.PermissionChoices.Admin:
-            return True
-        else:
-            return False
+    def has_object_delete_permission(self, request):
+        return request.user.is_staff

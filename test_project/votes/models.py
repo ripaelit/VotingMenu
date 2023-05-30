@@ -1,11 +1,14 @@
+from datetime import datetime
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from test_project.menus.models import Menu
 from test_project.utils.models import TimeStampedModel
 
 # Create your models here.
 class Vote(TimeStampedModel):
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.SET_NULL, null=True)
     menu = models.ForeignKey("menus.Menu", on_delete=models.CASCADE)
 
     class VoteValue(models.IntegerChoices):
@@ -52,6 +55,17 @@ class Vote(TimeStampedModel):
     # BEGIN of PERMISSION LOGIC =============
     @classmethod
     def has_create_permission(cls, request):
+        menu = Menu.objects.get(pk=int(request.data.get("menu")))
+        if request.user.is_staff or request.user == menu.restaurant.manager:
+            return False
+        today = datetime.now().date()
+        create_time = datetime.combine(today, datetime.min.time())
+        votes = cls.objects.filter(
+            user=request.user,
+            created_at__gt=create_time
+        )
+        if len(votes) > 0:
+            return False
         return True
 
     @classmethod
@@ -59,9 +73,5 @@ class Vote(TimeStampedModel):
         return True
 
     @classmethod
-    def has_vote_menu_permission(cls, request):
-        return True
-
-    @classmethod
-    def has_vote_menu_permission(cls, request):
+    def has_object_read_permission(cls, request):
         return True

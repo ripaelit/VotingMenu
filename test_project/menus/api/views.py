@@ -27,9 +27,6 @@ class CustomMenuFilterBackend(BaseFilterBackend):
 class MenuViewSet(ModelViewSet):
     """
     API:
-        vote_menu: 
-            description: vote for restaurant menu
-            user permission role: everyone
         update: 
             description: upload menu for restaurant
             user permission role: admin or restaurant
@@ -78,16 +75,19 @@ class RestaurantViewSet(ModelViewSet):
         SearchFilter,
     ]
     filter_fields = {
+        "manager": ["exact", "in"],
         "name": ["exact", "in"],
         "location": ["exact", "in"],
     }
     ordering_fields = [
+        "manager",
         "name",
         "location",
         "created_at",
         "updated_at",
     ]
     search_fields = [
+        "manager",
         "name",
         "location",
     ]

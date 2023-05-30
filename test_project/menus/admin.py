@@ -6,8 +6,8 @@ from test_project.menus.models import Restaurant, Menu
 # Register your models here.
 @register(Restaurant)
 class RestaurantAdmin(ModelAdmin):
-    list_display = ["name", "location"]
-    search_fields = ["name", "location"]
+    list_display = ["name", "location", "manager"]
+    search_fields = ["name", "location", "manager"]
 
 
 @register(Menu)
