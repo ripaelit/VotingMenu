@@ -26,13 +26,20 @@ class CustomMenuFilterBackend(BaseFilterBackend):
 
 class MenuViewSet(ModelViewSet):
     """
-    API:
-        update: 
-            description: upload menu for restaurant
-            user permission role: admin or restaurant
-        list: 
-            description: get current day menu & get results for current day
-            user permission role: everyone
+    retrieve:
+    Return the specified Menu instance.
+
+    list:
+    Return a list of all the existing Menu instances.
+
+    create:
+    Create a new Menu instance.
+
+    update:
+    Update an existing Menu instance.
+
+    destroy:
+    Delete the specified Menu instance.
     """
     permission_classes = (DRYPermissions,)
     serializer_class = MenuSerializer
@@ -63,10 +70,20 @@ class MenuViewSet(ModelViewSet):
 
 class RestaurantViewSet(ModelViewSet):
     """
-    API:
-        create:
-            description: create restaurant
-            permission: admin
+    retrieve:
+    Return the specified Restaurant instance.
+
+    list:
+    Return a list of all the existing Restaurant instances.
+
+    create:
+    Create a new Restaurant instance.
+
+    update:
+    Update an existing Restaurant instance.
+
+    destroy:
+    Delete the specified Restaurant instance.
     """
     permission_classes = (DRYPermissions,)
     serializer_class = RestaurantSerializer

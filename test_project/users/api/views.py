@@ -13,18 +13,24 @@ User = get_user_model()
 
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
     """
-    API:
-        login: 
-            description: authenticate user login
-            user permission role: everyone
+    retrieve:
+    Return the specified User instance.
 
-        me:
-            description: get current user
-            user permission role: everyone
+    list:
+    Return a list of all the existing User instances.
 
-        create:
-            description: create user with permission role(admin, restaurant, employee)
-            user permission role: admin
+    create:
+    Create a new User instance.
+
+    update:
+    Update an existing User instance.
+
+    destroy:
+    Delete the specified User instance.
+
+    login:
+    Authenticate user login
+
     """
     serializer_class = UserSerializer
     queryset = User.objects.all()
