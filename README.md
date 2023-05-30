@@ -31,7 +31,7 @@ The following details how to deploy this application.
 
 ### Local
 
-See detailed [cookiecutter-django Getting up and running locally](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html).
+- Follow the guide - [cookiecutter-django Getting up and running locally](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html).
 
 - Create .env file in your project and set the environment variables below:
   DATABASE_URL=postgres://postgres:debug@127.0.0.1:5432/test_project
@@ -126,9 +126,12 @@ users <-- menus <-- votes
 
 ### Model Structure
 
-![model diagram](Model%20Structure%20Diagram.png)
+![model diagram](images/model_diagram.png)
 
 ### About Server Availability
+
+The intention is to use Kubernetes. If the cloud server is Azure, we can use AKS and ACS.
+And switching to microservices architecture is recommended to develop a server considering scalability and availability.
 
 ## Results
 

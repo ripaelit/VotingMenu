@@ -1,3 +1,4 @@
+import datetime
 import pytest
 from django.test import Client
 from django.test.client import BOUNDARY, MULTIPART_CONTENT, encode_multipart
@@ -111,7 +112,8 @@ class TestMenuAPI:
             reverse("api:menu-list"),
             data={
                 "restaurant": ready_restaurant.pk,
-                "content": "bread, cake"
+                "content": "bread, cake",
+                "date": datetime.date.today().isoformat(),
             }
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -120,7 +122,8 @@ class TestMenuAPI:
             reverse("api:menu-list"),
             data={
                 "restaurant": ready_restaurant.pk,
-                "content": "bread, cake"
+                "content": "bread, cake",
+                "date": datetime.date.today().isoformat(),
             }
         )
         assert response.status_code == status.HTTP_201_CREATED
@@ -129,10 +132,11 @@ class TestMenuAPI:
             reverse("api:menu-list"),
             data={
                 "restaurant": ready_restaurant.pk,
-                "content": "bread, cake"
+                "content": "bread, cake",
+                "date": datetime.date.today().isoformat(),
             }
         )
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_update(self, client: Client, staff_user, restaurant_manager, employee, ready_menu, ready_restaurant):
         client.force_login(employee)
