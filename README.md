@@ -1,4 +1,20 @@
-# Test Project
+# Vote Menu - Test Project by Teofil Kobylarz
+
+## 🙏 Appreciation
+
+Thanks for those reviewing my code.
+
+Understanding is noble deed which requires patience.
+
+And so I tried to be as specific as possible in this guide documentation so that those reviewing my code will find it easy to check out my work. But you might have some questions still.
+
+In that case or if you have some suggestions for me, you can drop me a message here - [ripaelit1111@gmail.com](mailto:ripaelit1111@gmail.com)
+
+> Alone we can do so little; together we can do so much.
+
+## Purpose
+
+This is a DRF(Django REST Framework) project by Teofil Kobylarz for demonstration.
 
 Upload menu for restaurant
 
@@ -9,7 +25,28 @@ Upload menu for restaurant
 
 Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings.html).
 
-## Basic Commands
+## Deployment
+
+The following details how to deploy this application.
+
+### Local
+
+See detailed [cookiecutter-django Getting up and running locally](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html).
+
+- Create .env file in your project and set the environment variables below:
+  DATABASE_URL=postgres://postgres:debug@127.0.0.1:5432/test_project
+  USE_DOCKER=False
+  CELERY_BROKER_URL=redis://localhost:6379/0
+
+### Heroku
+
+See detailed [cookiecutter-django Heroku documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-on-heroku.html).
+
+### Docker
+
+See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).
+
+## Basic Commands (After Deployment)
 
 ### Setting Up Your Users
 
@@ -20,12 +57,6 @@ Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings
       $ python manage.py createsuperuser
 
 For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
-
-### Type checks
-
-Running type checks with mypy:
-
-    $ mypy test_project
 
 ### Test coverage
 
@@ -43,57 +74,75 @@ To run the tests, check your test coverage, and generate an HTML coverage report
 
 Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html#sass-compilation-live-reloading).
 
-### Celery
+## API Documentation
 
-This app comes with Celery.
+### 1. Interactive Doc ....
 
-To run a celery worker:
+API consumers can find interactive API documentation if he opens the URL of each API endpoint in browser.
 
-```bash
-cd test_project
-celery -A config.celery_app worker -l info
-```
+You can start by browsing the following URLs.
 
-Please note: For Celery's import magic to work, it is important _where_ the celery commands are run. If you are in the same folder with _manage.py_, you should be right.
+https://localhost:8000/api/users/
+https://localhost:8000/api/users/allen (you can replace the number with actual username)
+https://localhost:8000/api/restaurants/
+https://localhost:8000/api/restaurants/1 (you can replace the number with actual ID)
+https://localhost:8000/api/menus/
+https://localhost:8000/api/menus/1 (you can replace the number with actual ID)
+https://localhost:8000/api/votes/
+https://localhost:8000/api/votes/1 (you can replace the number with actual ID)
+https://localhost:8000/api/votes/vote_menu
 
-To run [periodic tasks](https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html), you'll need to start the celery beat scheduler service. You can start it as a standalone process:
+### 2. Postman File
 
-```bash
-cd test_project
-celery -A config.celery_app beat
-```
+VoteMenuProject.postman_collection.json
 
-or you can embed the beat service inside a worker with the `-B` option (not recommended for production use):
+## Approach to the Project
 
-```bash
-cd test_project
-celery -A config.celery_app worker -B -l info
-```
+### Requirement Analysis
 
-### Email Server
+In real project, I'd confirm the requirement before start coding.
 
-In development, it is often nice to be able to see emails that are being sent from your application. For that reason local SMTP server [MailHog](https://github.com/mailhog/MailHog) with a web interface is available as docker container.
+### Coding Principles
 
-Container mailhog will start automatically when you will run all docker containers.
-Please check [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html) for more details how to start all containers.
+- Fat Model Principle
+- Test driven development (TDD)
+- Small App Principle
 
-With MailHog running, to view messages that are sent by your application, open your browser and go to `http://127.0.0.1:8025`
+  [Keep It Simple, Stupid]
+  When building software projects, each piece of unnecessary complexity makes it harder to add new features and maintain old ones. Attempt the simplest solution, but take care not to implement overly simplistic solutions that make bad assumptions. This concept is sometimes abbreviated as “KISS.”
 
-### Sentry
+  [When in Doubt, Keep Apps Small]
+  Don’t worry too hard about getting app design perfect. It’s an art, not a science. Sometimes you have to rewrite them or break them up. That’s okay. Try and keep your apps small. Remember, it’s better to have many small apps than to have a few giant apps.
 
-Sentry is an error logging aggregator service. You can sign up for a free account at <https://sentry.io/signup/?code=cookiecutter> or download and host it yourself.
-The system is set up with reasonable defaults, including 404 logging and integration with the WSGI application.
+### (Django App Structure) Dependency
 
-You must set the DSN url in production.
+users <-- menus <-- votes
+menus <-- users
+menus <-- votes
+users <-- votes
 
-## Deployment
+| App   | Models           |
+| ----- | ---------------- |
+| users | User             |
+| menus | Restaurant, Menu |
+| votes | Vote             |
 
-The following details how to deploy this application.
+### Model Structure
 
-### Heroku
+![model diagram](Model%20Structure%20Diagram.png)
 
-See detailed [cookiecutter-django Heroku documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-on-heroku.html).
+### About Server Availability
 
-### Docker
+![HA Cloud Architecture Diagram](HA%20Cloud%20Architecture%20Diagram.png)
 
-See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).
+## Results
+
+![Alt text](images/admin_page_login.png)
+![Alt text](images/admin_page-user.png)
+![Alt text](images/admin_page-restaurant.png)
+![Alt text](images/admin_page-menu.png)
+![Alt text](images/admin_page-vote.png)
+![Alt text](images/api-user.png)
+![Alt text](images/api-restaurant.png)
+![Alt text](images/api-menu.png)
+![Alt text](images/api-vote.png)
