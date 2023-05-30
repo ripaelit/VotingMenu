@@ -12,6 +12,7 @@ pytestmark = pytest.mark.django_db
 class TestRestaurantAPI:
     def test_create(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission):
         client.force_login(user_with_employee_permission)
+        client.defaults["Api-version"] = "v1"
         response = client.post(
             reverse("api:restaurant-list"),
             data={
@@ -43,6 +44,7 @@ class TestRestaurantAPI:
 
     def test_delete(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission, ready_restaurant):
         client.force_login(user_with_employee_permission)
+        client.defaults["Api-version"] = "v1"
         response = client.delete(
             reverse("api:restaurant-detail", kwargs={'pk': ready_restaurant.pk}),
         )
@@ -62,6 +64,7 @@ class TestRestaurantAPI:
 class TestMenuAPI:
     def test_create(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission, ready_restaurant):
         client.force_login(user_with_employee_permission)
+        client.defaults["Api-version"] = "v1"
         response = client.post(
             reverse("api:menu-list"),
             data={
@@ -91,6 +94,7 @@ class TestMenuAPI:
 
     def test_update(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission, ready_menu):
         client.force_login(user_with_employee_permission)
+        client.defaults["Api-version"] = "v1"
         response = client.patch(
             reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
             data={
@@ -122,6 +126,7 @@ class TestMenuAPI:
 
     def test_delete(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission, ready_menu):
         client.force_login(user_with_employee_permission)
+        client.defaults["Api-version"] = "v1"
         response = client.delete(
             reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
         )

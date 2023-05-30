@@ -12,6 +12,7 @@ pytestmark = pytest.mark.django_db
 class TestUserAPI:
     def test_login(self, client: Client, user_with_admin_permission):
         client.force_login(user_with_admin_permission)
+        client.defaults["Api-version"] = "v1"
         response = client.post(
             reverse("api:user-login"),
             data={"username": user_with_admin_permission.username, "password": user_with_admin_permission.username},
@@ -20,6 +21,7 @@ class TestUserAPI:
 
     def test_create(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission):
         client.force_login(user_with_employee_permission)
+        client.defaults["Api-version"] = "v1"
         response = client.post(
             reverse("api:user-list"),
             data={
