@@ -15,22 +15,30 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
     """
     retrieve:
     Return the specified User instance.
+    GET /api/users/:id/
 
     list:
     Return a list of all the existing User instances.
+    GET /api/users/
 
     create:
     Create a new User instance.
+    POST /api/users/
+    - Only admin can create users (via admin page) (no API required now)
 
     update:
     Update an existing User instance.
+    PUT|PATCH /api/users/:id/
 
     destroy:
     Delete the specified User instance.
+    DELETE /api/menus/:id/
 
     login:
     Authenticate user login
-
+    POST /api/users/login
+    - When username and email are not given, it should return ValidationError
+    - When username or password is incorrect, it should return 401 Unauthorized with validation error message
     """
     serializer_class = UserSerializer
     queryset = User.objects.all()

@@ -17,6 +17,41 @@ VOTED_MENUS_COUNT_V1 = 1
 
 
 class VoteViewSet(ModelViewSet):
+    """
+    retrieve:
+    Return the specified User instance.
+    GET /api/votes/:id/
+
+    list:
+    Return a list of all the existing User instances.
+    GET /api/votes/
+
+    create:
+    Create a new User instance.
+    POST /api/votes/
+    - A user can create at most one vote a day. Second attempt should return ValidationError (Django ValidationError)
+    - A user can create at most one vote a day. Second attempt should return 400 Bad Request with validation error message.
+
+    update:
+    Update an existing User instance.
+    PUT|PATCH /api/votes/:id/
+    - A user cannot withdraw or update his vote.
+    - 400 Bad request. "A user cannot withdraw or update his vote."
+
+    destroy:
+    Delete the specified User instance.
+    DELETE /api/votes/:id/
+    - A user cannot withdraw or update his vote.
+    - 400 Bad request. "A user cannot withdraw or update his vote."
+
+    vote_menu:
+    Vote for restaurant menu
+    POST /api/votes/vote_menu
+    - Only employees can vote. (Admin, restaurant managers cannot vote with their names)
+    - Vote for a menu should be made in the same date as menu. (00:00~24:00 in server time zone)
+    - Vote for a menu should be made in the same date as menu. (00:00~24:00 in server time zone)  Otherwise 400 Bad Request with the reason in response body. ("Too early to vote" "Too late to vote")
+    """
+
     permission_classes = (DRYPermissions,)
     serializer_class = VoteSerializer
     queryset = Vote.objects.all()
