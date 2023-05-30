@@ -13,7 +13,7 @@ pytestmark = pytest.mark.django_db
 class TestVoteAPI:
     def test_create(self, client: Client, staff_user, restaurant_manager, employee, ready_menu):
         client.force_login(employee)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.post(
             reverse("api:vote-list"),
             data={
@@ -45,7 +45,7 @@ class TestVoteAPI:
 
     def test_delete(self, client: Client, staff_user, restaurant_manager, employee, ready_vote):
         client.force_login(employee)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.delete(
             reverse("api:vote-detail", kwargs={'pk': ready_vote.pk}),
         )
@@ -63,7 +63,7 @@ class TestVoteAPI:
 
     def test_update(self, client: Client, staff_user, restaurant_manager, employee, ready_vote):
         client.force_login(employee)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.patch(
             reverse("api:vote-detail", kwargs={'pk': ready_vote.pk}),
             data=encode_multipart(
@@ -102,7 +102,7 @@ class TestVoteAPI:
 
     def test_vote_menu(self, client: Client, staff_user, ready_menus: FixtureDataPool):
         client.force_login(staff_user)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.post(
             reverse("api:vote-vote-menu"),
             data={"menus": ready_menus.menus[0].pk}
@@ -115,7 +115,7 @@ class TestVoteAPI:
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-        client.defaults["Api-version"] = "v2"
+        client.defaults["HTTP_API_VERSION"] = "v2"
         response = client.post(
             reverse("api:vote-vote-menu"),
             data={"menus": menus_id}

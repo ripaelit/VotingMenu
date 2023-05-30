@@ -12,7 +12,7 @@ pytestmark = pytest.mark.django_db
 class TestUserAPI:
     def test_login(self, client: Client, staff_user):
         client.force_login(staff_user)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.post(
             reverse("api:user-login"),
             data={"username": staff_user.username, "password": staff_user.username},
@@ -21,7 +21,7 @@ class TestUserAPI:
 
     def test_create(self, client: Client, staff_user, restaurant_manager, employee):
         client.force_login(employee)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.post(
             reverse("api:user-list"),
             data={

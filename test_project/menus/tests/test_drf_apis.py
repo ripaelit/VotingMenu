@@ -12,7 +12,7 @@ pytestmark = pytest.mark.django_db
 class TestRestaurantAPI:
     def test_create(self, client: Client, staff_user, restaurant_manager, employee):
         client.force_login(employee)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.post(
             reverse("api:restaurant-list"),
             data={
@@ -44,7 +44,7 @@ class TestRestaurantAPI:
 
     def test_update(self, client: Client, staff_user, restaurant_manager, employee, ready_restaurant):
         client.force_login(employee)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.patch(
             reverse("api:restaurant-detail", kwargs={'pk': ready_restaurant.pk}),
             data=encode_multipart(
@@ -86,7 +86,7 @@ class TestRestaurantAPI:
 
     def test_delete(self, client: Client, staff_user, restaurant_manager, employee, ready_restaurant):
         client.force_login(employee)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.delete(
             reverse("api:restaurant-detail", kwargs={'pk': ready_restaurant.pk}),
         )
@@ -106,7 +106,7 @@ class TestRestaurantAPI:
 class TestMenuAPI:
     def test_create(self, client: Client, staff_user, restaurant_manager, employee, ready_restaurant):
         client.force_login(employee)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.post(
             reverse("api:menu-list"),
             data={
@@ -132,11 +132,11 @@ class TestMenuAPI:
                 "content": "bread, cake"
             }
         )
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_201_CREATED
 
     def test_update(self, client: Client, staff_user, restaurant_manager, employee, ready_menu, ready_restaurant):
         client.force_login(employee)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.patch(
             reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
             data=encode_multipart(
@@ -178,7 +178,7 @@ class TestMenuAPI:
 
     def test_delete(self, client: Client, staff_user, restaurant_manager, employee, ready_menu):
         client.force_login(employee)
-        client.defaults["Api-version"] = "v1"
+        client.defaults["HTTP_API_VERSION"] = "v1"
         response = client.delete(
             reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
         )

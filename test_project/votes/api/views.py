@@ -81,7 +81,7 @@ class VoteViewSet(ModelViewSet):
         params:
             request:
                 header:
-                    api-version: version of api(ex: "v1" for old version and "v2" for new version)
+                    HTTP_API_VERSION: version of api(ex: "v1" for old version and "v2" for new version)
                 body:
                     menus: id of menus to be voted (ex: "10" in v1, "17,23,34" in v2)
 
@@ -90,7 +90,7 @@ class VoteViewSet(ModelViewSet):
         voted_menus_id = str(request.data.get("menus"))
         voted_menus_id = voted_menus_id.split(',')
 
-        version = request.META.get('Api-version')
+        version = request.META.get('HTTP_API_VERSION')
         if version == "v1":
             if len(voted_menus_id) == VOTED_MENUS_COUNT_V1:
                 restaurant_menu = Menu.objects.get(pk=int(voted_menus_id[0]))
