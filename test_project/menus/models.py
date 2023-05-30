@@ -68,17 +68,19 @@ class Menu(TimeStampedModel):
 
     @classmethod
     def has_create_permission(cls, request):
-        restaurant = Restaurant.objects.get(pk=int(request.data.get("restaurant")))
-        if request.user.is_staff or request.user == restaurant.manager:
-            today = datetime.now().date()
-            create_time = datetime.combine(today, datetime.min.time())
-            menus = Menu.objects.filter(
-                restaurant=restaurant, created_at__gt=create_time
-            )
-            if len(menus) > 0:
-                return False
-            return True
-        return False
+        if request.data.get("restaurant"):
+            restaurant = Restaurant.objects.get(pk=int(request.data.get("restaurant")))
+            if request.user.is_staff or request.user == restaurant.manager:
+                today = datetime.now().date()
+                create_time = datetime.combine(today, datetime.min.time())
+                menus = Menu.objects.filter(
+                    restaurant=restaurant, created_at__gt=create_time
+                )
+                if len(menus) > 0:
+                    return False
+                return True
+            return False
+        return True
 
     def has_object_read_permission(self, request):
         return True

@@ -27,7 +27,12 @@ class Vote(TimeStampedModel):
     @classmethod
     def create(cls, user, menu, value):
         try:
-            inst = cls.objects.get(user=user)
+            today = datetime.now().date()
+            create_time = datetime.combine(today, datetime.min.time())
+            inst = cls.objects.get(
+                user=user,
+                created_at__gt=create_time
+            )
             return inst
         except cls.DoesNotExist:
             new_inst = cls(user=user, menu=menu)
@@ -38,7 +43,12 @@ class Vote(TimeStampedModel):
     @classmethod
     def create_votes_v2(cls, user, menus):
         try:
-            inst = cls.objects.get(user=user)
+            today = datetime.now().date()
+            create_time = datetime.combine(today, datetime.min.time())
+            inst = cls.objects.get(
+                user=user,
+                created_at__gt=create_time
+            )
             return inst
         except cls.DoesNotExist:
             value = [
@@ -55,17 +65,12 @@ class Vote(TimeStampedModel):
     # BEGIN of PERMISSION LOGIC =============
     @classmethod
     def has_create_permission(cls, request):
-        menu = Menu.objects.get(pk=int(request.data.get("menu")))
-        if request.user.is_staff or request.user == menu.restaurant.manager:
+        if request.user.is_staff:
             return False
-        today = datetime.now().date()
-        create_time = datetime.combine(today, datetime.min.time())
-        votes = cls.objects.filter(
-            user=request.user,
-            created_at__gt=create_time
-        )
-        if len(votes) > 0:
-            return False
+        if request.data.get("menu"):
+            menu = Menu.objects.get(pk=int(request.data.get("menu")))
+            if request.user == menu.restaurant.manager:
+                return False
         return True
 
     @classmethod
@@ -74,4 +79,8 @@ class Vote(TimeStampedModel):
 
     @classmethod
     def has_object_read_permission(cls, request):
+        return True
+
+    @classmethod
+    def has_vote_menu_permission(cls, request):
         return True

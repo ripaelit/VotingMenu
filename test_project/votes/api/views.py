@@ -52,7 +52,7 @@ class VoteViewSet(ModelViewSet):
 
         return: HTTP_200_OK response
         """
-        voted_menus_id = request.data.get("menus")
+        voted_menus_id = str(request.data.get("menus"))
         voted_menus_id = voted_menus_id.split(',')
 
         version = request.META.get('Api-version')
@@ -65,7 +65,7 @@ class VoteViewSet(ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                     data="We vote only one menu in old version api."
                 )
-        if version == "v2" or version == None:
+        if version == "v2":
             if len(voted_menus_id) == VOTED_MENUS_COUNT_V2:
                 menus = []
                 for id in voted_menus_id:

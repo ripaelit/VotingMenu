@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from test_project.menus.models import Restaurant, Menu
-from test_project.votes.api.serializers import VoteSerializer
+
 
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,8 +10,8 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 
 class MenuSerializer(serializers.ModelSerializer):
-    restaurant = serializers.SerializerMethodField()
-    vote_sum = serializers.IntegerField()
+    restaurant = serializers.SerializerMethodField(read_only=False, required=False)
+    vote_sum = serializers.IntegerField(read_only=True, required=False)
 
     class Meta:
         model = Menu
