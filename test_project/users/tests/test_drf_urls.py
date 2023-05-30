@@ -16,3 +16,8 @@ def test_user_list():
 def test_user_me():
     assert reverse("api:user-me") == "/api/users/me/"
     assert resolve("/api/users/me/").view_name == "api:user-me"
+
+
+def test_user_login():
+    assert reverse("api:user-login") == "/api/users/login/"
+    assert resolve("/api/users/login/").view_name == "api:user-login"
