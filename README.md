@@ -107,10 +107,6 @@ In real project, I'd confirm the requirement before start coding.
 - Fat Model Principle
 - Test driven development (TDD)
 - Small App Principle
-
-  [Keep It Simple, Stupid]
-  When building software projects, each piece of unnecessary complexity makes it harder to add new features and maintain old ones. Attempt the simplest solution, but take care not to implement overly simplistic solutions that make bad assumptions. This concept is sometimes abbreviated as “KISS.”
-
   [When in Doubt, Keep Apps Small]
   Don’t worry too hard about getting app design perfect. It’s an art, not a science. Sometimes you have to rewrite them or break them up. That’s okay. Try and keep your apps small. Remember, it’s better to have many small apps than to have a few giant apps.
 
