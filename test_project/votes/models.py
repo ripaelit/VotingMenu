@@ -82,5 +82,13 @@ class Vote(TimeStampedModel):
         return True
 
     @classmethod
+    def has_update_permission(cls, request):
+        return False
+
+    @classmethod
     def has_vote_menu_permission(cls, request):
         return True
+
+    @classmethod
+    def has_destroy_permission(cls, request):
+        return False

@@ -4,7 +4,8 @@ from test_project.users.models import User
 from test_project.users.tests.factories import UserFactory
 from test_project.menus.models import Menu, Restaurant
 from test_project.menus.tests.factories import MenuFactory, RestaurantFactory
-
+from test_project.votes.models import Vote
+from test_project.votes.tests.factories import VoteFactory
 
 class FixtureDataPool:
     menus: list[Menu] = []
@@ -36,44 +37,43 @@ def menu() -> Menu:
 
 
 @pytest.fixture
-def user_with_admin_permission() -> User:
+def staff_user() -> User:
     user = UserFactory(
         name="test",
         username="test",
         password="test",
-        permission_role=User.PermissionChoices.Admin
+        is_staff=True
     )
     user.save()
     return user
 
 
 @pytest.fixture
-def user_with_restaurant_manager_permission() -> User:
+def restaurant_manager() -> User:
     user = UserFactory(
         name="test1",
         username="test1",
-        password="test1",
-        permission_role=User.PermissionChoices.RestaurantManager
+        password="test1"
     )
     user.save()
     return user
 
 
 @pytest.fixture
-def user_with_employee_permission() -> User:
+def employee() -> User:
     user = UserFactory(
         name="test2",
         username="test2",
-        password="test2",
-        permission_role=User.PermissionChoices.Employee
+        password="test2"
     )
     user.save()
     return user
 
 
 @pytest.fixture
-def ready_restaurant() -> Restaurant:
+def ready_restaurant(restaurant_manager) -> Restaurant:
     restaurant = RestaurantFactory(
+        manager=restaurant_manager,
         name="Cake Restaurant",
         location="Salman Street 3.",
     )
@@ -89,6 +89,17 @@ def ready_menu(ready_restaurant) -> Menu:
     )
     menu.save()
     return menu
+
+
+@pytest.fixture
+def ready_vote(employee, ready_menu) -> Vote:
+    vote = VoteFactory(
+        user=employee,
+        menu=ready_menu,
+        value=Vote.VoteValue.BEST
+    )
+    vote.save()
+    return vote
 
 
 @pytest.fixture

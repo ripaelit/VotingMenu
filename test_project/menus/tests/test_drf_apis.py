@@ -10,8 +10,8 @@ pytestmark = pytest.mark.django_db
 
 
 class TestRestaurantAPI:
-    def test_create(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission):
-        client.force_login(user_with_employee_permission)
+    def test_create(self, client: Client, staff_user, restaurant_manager, employee):
+        client.force_login(employee)
         client.defaults["Api-version"] = "v1"
         response = client.post(
             reverse("api:restaurant-list"),
@@ -21,7 +21,7 @@ class TestRestaurantAPI:
             }
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        client.force_login(user_with_restaurant_manager_permission)
+        client.force_login(restaurant_manager)
         response = client.post(
             reverse("api:restaurant-list"),
             data={
@@ -30,7 +30,7 @@ class TestRestaurantAPI:
             }
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        client.force_login(user_with_admin_permission)
+        client.force_login(staff_user)
         response = client.post(
             reverse("api:restaurant-list"),
             data={
@@ -42,19 +42,61 @@ class TestRestaurantAPI:
         assert response.data.get("name") == "Cake Restaurant"
         assert response.data.get("location") == "Salman Street 2."
 
-    def test_delete(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission, ready_restaurant):
-        client.force_login(user_with_employee_permission)
+    def test_update(self, client: Client, staff_user, restaurant_manager, employee, ready_restaurant):
+        client.force_login(employee)
+        client.defaults["Api-version"] = "v1"
+        response = client.patch(
+            reverse("api:restaurant-detail", kwargs={'pk': ready_restaurant.pk}),
+            data=encode_multipart(
+                BOUNDARY,
+                {
+                    "name": ready_restaurant.name,
+                    "location": ready_restaurant.location
+                }
+            ),
+            content_type=MULTIPART_CONTENT
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        client.force_login(restaurant_manager)
+        response = client.patch(
+            reverse("api:restaurant-detail", kwargs={'pk': ready_restaurant.pk}),
+            data=encode_multipart(
+                BOUNDARY,
+                {
+                    "name": ready_restaurant.name,
+                    "location": ready_restaurant.location
+                }
+            ),
+            content_type=MULTIPART_CONTENT
+        )
+        assert response.status_code == status.HTTP_200_OK
+        client.force_login(staff_user)
+        response = client.patch(
+            reverse("api:restaurant-detail", kwargs={'pk': ready_restaurant.pk}),
+            data=encode_multipart(
+                BOUNDARY,
+                {
+                    "name": ready_restaurant.name,
+                    "location": ready_restaurant.location
+                }
+            ),
+            content_type=MULTIPART_CONTENT
+        )
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_delete(self, client: Client, staff_user, restaurant_manager, employee, ready_restaurant):
+        client.force_login(employee)
         client.defaults["Api-version"] = "v1"
         response = client.delete(
             reverse("api:restaurant-detail", kwargs={'pk': ready_restaurant.pk}),
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        client.force_login(user_with_restaurant_manager_permission)
+        client.force_login(restaurant_manager)
         response = client.delete(
             reverse("api:restaurant-detail", kwargs={'pk': ready_restaurant.pk}),
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        client.force_login(user_with_admin_permission)
+        client.force_login(staff_user)
         response = client.delete(
             reverse("api:restaurant-detail", kwargs={'pk': ready_restaurant.pk}),
         )
@@ -62,8 +104,8 @@ class TestRestaurantAPI:
 
 
 class TestMenuAPI:
-    def test_create(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission, ready_restaurant):
-        client.force_login(user_with_employee_permission)
+    def test_create(self, client: Client, staff_user, restaurant_manager, employee, ready_restaurant):
+        client.force_login(employee)
         client.defaults["Api-version"] = "v1"
         response = client.post(
             reverse("api:menu-list"),
@@ -73,71 +115,81 @@ class TestMenuAPI:
             }
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        client.force_login(user_with_restaurant_manager_permission)
+        client.force_login(restaurant_manager)
         response = client.post(
-            reverse("api:restaurant-list"),
+            reverse("api:menu-list"),
+            data={
+                "restaurant": ready_restaurant.pk,
+                "content": "bread, cake"
+            }
+        )
+        assert response.status_code == status.HTTP_201_CREATED
+        client.force_login(staff_user)
+        response = client.post(
+            reverse("api:menu-list"),
             data={
                 "restaurant": ready_restaurant.pk,
                 "content": "bread, cake"
             }
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        client.force_login(user_with_admin_permission)
-        response = client.post(
-            reverse("api:restaurant-list"),
-            data={
-                "restaurant": ready_restaurant.pk,
-                "content": "bread, cake"
-            }
-        )
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_update(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission, ready_menu):
-        client.force_login(user_with_employee_permission)
+    def test_update(self, client: Client, staff_user, restaurant_manager, employee, ready_menu, ready_restaurant):
+        client.force_login(employee)
         client.defaults["Api-version"] = "v1"
         response = client.patch(
             reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
-            data={
-                "content": "bread, cake"
-            }
+            data=encode_multipart(
+                BOUNDARY,
+                {
+                    "content": "bread, cake",
+                    "restaurant": ready_restaurant.pk
+                }
+            ),
+            content_type=MULTIPART_CONTENT
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        client.force_login(user_with_restaurant_manager_permission)
+        client.force_login(restaurant_manager)
         response = client.patch(
             reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
-            data={
-                "content": "bread, cake"
-            }
+            data=encode_multipart(
+                BOUNDARY,
+                {
+                    "content": "bread, cake",
+                    "restaurant": ready_restaurant.pk
+                }
+            ),
+            content_type=MULTIPART_CONTENT
         )
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-        client.force_login(user_with_admin_permission)
+        assert response.status_code == status.HTTP_200_OK
+        client.force_login(staff_user)
         response = client.put(
             reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
             data=encode_multipart(
                 BOUNDARY,
                 {
-                    "restaurant": ready_menu.restaurant.pk,
-                    "content": "bread, cake"
+                    "content": "bread, cake",
+                    "restaurant": ready_restaurant.pk
                 }
             ),
             content_type=MULTIPART_CONTENT
         )
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.status_code == status.HTTP_200_OK
 
-    def test_delete(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission, ready_menu):
-        client.force_login(user_with_employee_permission)
+    def test_delete(self, client: Client, staff_user, restaurant_manager, employee, ready_menu):
+        client.force_login(employee)
         client.defaults["Api-version"] = "v1"
         response = client.delete(
             reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        client.force_login(user_with_restaurant_manager_permission)
-        response = client.delete(
-            reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
-        )
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-        client.force_login(user_with_admin_permission)
+        client.force_login(restaurant_manager)
         response = client.delete(
             reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
         )
         assert response.status_code == status.HTTP_204_NO_CONTENT
+        client.force_login(staff_user)
+        response = client.delete(
+            reverse("api:menu-detail", kwargs={'pk': ready_menu.pk}),
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND

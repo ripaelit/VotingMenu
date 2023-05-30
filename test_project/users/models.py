@@ -49,5 +49,5 @@ class User(TimeStampedModel, AbstractUser):
     def has_object_update_permission(self, request):
         return request.user.is_staff
 
-    def has_object_delete_permission(self, request):
+    def has_object_destroy_permission(self, request):
         return request.user.is_staff

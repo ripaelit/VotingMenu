@@ -10,6 +10,12 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 
 class MenuSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Menu
+        fields = "__all__"
+
+
+class MenuDetailSerializer(serializers.ModelSerializer):
     restaurant = serializers.SerializerMethodField(read_only=False, required=False)
     vote_sum = serializers.IntegerField(read_only=True, required=False)
 

@@ -6,4 +6,4 @@ from ..models import Vote
 class VoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vote
-        fields = ["user", "menu", "value"]
+        fields = "__all__"

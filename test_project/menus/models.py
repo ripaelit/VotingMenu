@@ -12,6 +12,9 @@ class Restaurant(TimeStampedModel):
     name = models.CharField(_("Name of Restaurant"), max_length=255)
     location = models.CharField(_("Location of Restaurant"), max_length=255)
 
+    class Meta:
+        unique_together = ('name', 'location')
+
     def __str__(self) -> str:
         return f"{self.name} located in {self.location}"
 
@@ -31,22 +34,12 @@ class Restaurant(TimeStampedModel):
     def has_object_read_permission(self, request):
         return True
 
-    def has_object_write_permission(self, request):
-        try:
-            Restaurant.objects.get(
-                name=request.data.get("name"),
-                location=request.data.get("location")
-            )
-            return False
-        except Restaurant.DoesNotExist:
-            return True
-
     def has_object_update_permission(self, request):
         if request.user.is_staff or request.user == self.manager:
             return True
         return False
 
-    def has_object_delete_permission(self, request):
+    def has_object_destroy_permission(self, request):
         return request.user.is_staff
 
 
@@ -90,7 +83,7 @@ class Menu(TimeStampedModel):
             return True
         return False
 
-    def has_object_delete_permission(self, request):
+    def has_object_destroy_permission(self, request):
         if request.user.is_staff or request.user == self.restaurant.manager:
             return True
         return False

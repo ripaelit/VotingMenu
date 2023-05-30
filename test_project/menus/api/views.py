@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from test_project.menus.models import Restaurant, Menu
 from .serializers import MenuSerializer, RestaurantSerializer
-
+from test_project.utils.viewset_helpers import SerializerFindMixin
 
 class CustomMenuFilterBackend(BaseFilterBackend):
     """
@@ -24,7 +24,7 @@ class CustomMenuFilterBackend(BaseFilterBackend):
         return queryset
 
 
-class MenuViewSet(ModelViewSet):
+class MenuViewSet(SerializerFindMixin, ModelViewSet):
     """
     retrieve:
     Return the specified Menu instance.
@@ -42,7 +42,6 @@ class MenuViewSet(ModelViewSet):
     Delete the specified Menu instance.
     """
     permission_classes = (DRYPermissions,)
-    serializer_class = MenuSerializer
     queryset = Menu.objects.all()
     filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [
         SearchFilter,

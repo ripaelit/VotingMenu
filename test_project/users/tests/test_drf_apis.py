@@ -10,17 +10,17 @@ pytestmark = pytest.mark.django_db
 
 
 class TestUserAPI:
-    def test_login(self, client: Client, user_with_admin_permission):
-        client.force_login(user_with_admin_permission)
+    def test_login(self, client: Client, staff_user):
+        client.force_login(staff_user)
         client.defaults["Api-version"] = "v1"
         response = client.post(
             reverse("api:user-login"),
-            data={"username": user_with_admin_permission.username, "password": user_with_admin_permission.username},
+            data={"username": staff_user.username, "password": staff_user.username},
         )
         assert response.status_code == status.HTTP_200_OK
 
-    def test_create(self, client: Client, user_with_admin_permission, user_with_restaurant_manager_permission, user_with_employee_permission):
-        client.force_login(user_with_employee_permission)
+    def test_create(self, client: Client, staff_user, restaurant_manager, employee):
+        client.force_login(employee)
         client.defaults["Api-version"] = "v1"
         response = client.post(
             reverse("api:user-list"),
@@ -29,7 +29,7 @@ class TestUserAPI:
             }
         )
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-        client.force_login(user_with_restaurant_manager_permission)
+        client.force_login(restaurant_manager)
         response = client.post(
             reverse("api:user-list"),
             data={
@@ -37,9 +37,11 @@ class TestUserAPI:
             }
         )
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-        client.force_login(user_with_admin_permission)
+        client.force_login(staff_user)
         response = client.post(
-            reverse("api:user-login"),
-            data={"username": user_with_admin_permission.username, "password": user_with_admin_permission.username},
+            reverse("api:user-list"),
+            data={
+                "name": "new_user",
+            },
         )
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
