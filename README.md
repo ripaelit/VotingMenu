@@ -117,9 +117,6 @@ In real project, I'd confirm the requirement before start coding.
 ### (Django App Structure) Dependency
 
 users <-- menus <-- votes
-menus <-- users
-menus <-- votes
-users <-- votes
 
 | App   | Models           |
 | ----- | ---------------- |
@@ -132,8 +129,6 @@ users <-- votes
 ![model diagram](Model%20Structure%20Diagram.png)
 
 ### About Server Availability
-
-![HA Cloud Architecture Diagram](HA%20Cloud%20Architecture%20Diagram.png)
 
 ## Results
 
