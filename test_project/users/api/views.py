@@ -44,6 +44,20 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
     queryset = User.objects.all()
     lookup_field = "username"
 
+    def get_permissions(self):
+        action_name = self.action_map.get(self.request.method.lower())
+        if not action_name and self.request.method.lower() == "options":
+            action_names = list(self.action_map.values())
+            if len(action_names):
+                # TODO: LOW-PRIORITY: Ignoring the rest now. (Quick solution) YAGNI
+                action_name = action_names[0]
+        if action_name in {
+            "login",
+            "me",
+        }:
+            return []
+        return super().get_permissions()
+
     def get_queryset(self, *args, **kwargs):
         assert isinstance(self.request.user.id, int)
         return self.queryset.filter(id=self.request.user.id)
