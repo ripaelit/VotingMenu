@@ -3,7 +3,6 @@ from datetime import datetime
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from test_project.users.models import User
 from test_project.utils.models import TimeStampedModel
 
 # Create your models here.
