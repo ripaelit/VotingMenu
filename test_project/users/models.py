@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from simple_history.models import HistoricalRecords
 
 from test_project.utils.models import TimeStampedModel
 
@@ -17,6 +18,8 @@ class User(TimeStampedModel, AbstractUser):
     name = models.CharField(_("Name of User"), max_length=255)
     first_name = models.CharField(_("Firstname of User"), blank=True, max_length=255)
     last_name = models.CharField(_("Lastname of User"), blank=True, max_length=255)
+
+    history = HistoricalRecords()
 
     def get_absolute_url(self) -> str:
         """Get URL for user's detail view.

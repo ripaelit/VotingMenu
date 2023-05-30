@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from simple_history.models import HistoricalRecords
 
 from test_project.menus.models import Menu
 from test_project.utils.models import TimeStampedModel
@@ -22,6 +23,8 @@ class Vote(TimeStampedModel):
         choices=VoteValue.choices,
         default=VoteValue.GOOD,
     )
+
+    history = HistoricalRecords()
 
     @classmethod
     def create(cls, user, menu, value):

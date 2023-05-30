@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from simple_history.models import HistoricalRecords
 
 from test_project.utils.models import TimeStampedModel
 
@@ -13,6 +14,8 @@ class Restaurant(TimeStampedModel):
 
     class Meta:
         unique_together = ('name', 'location')
+
+    history = HistoricalRecords()
 
     def __str__(self) -> str:
         return f"{self.name} located in {self.location}"
@@ -45,6 +48,8 @@ class Restaurant(TimeStampedModel):
 class Menu(TimeStampedModel):
     restaurant = models.ForeignKey("menus.Restaurant", on_delete=models.CASCADE)
     content = models.TextField(_("Content of Menu - Menu Items as Plain Text")) # will convert into independent model in later versions
+
+    history = HistoricalRecords()
 
     def __str__(self) -> str:
         return f"{self.restaurant.name} Menu"
