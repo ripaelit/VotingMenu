@@ -12,7 +12,6 @@ class Vote(TimeStampedModel):
     menu = models.ForeignKey("menus.Menu", on_delete=models.CASCADE)
 
     class VoteValue(models.IntegerChoices):
-        NORMAL = 0, _("Restaurant is normal (score:0)") # normal -> 0
         GOOD = 1, _("Restaurant is good (score:1)") # good -> 1
         BETTER = 2, _("Restaurant is better (score:2)") # better -> 2
         BEST = 3, _("Restaurant is the best (score:3)") # best -> 3
@@ -21,7 +20,7 @@ class Vote(TimeStampedModel):
         _("Vote value"),
         help_text=_("Vote for the restaurant"),
         choices=VoteValue.choices,
-        default=VoteValue.NORMAL,
+        default=VoteValue.GOOD,
     )
 
     @classmethod
